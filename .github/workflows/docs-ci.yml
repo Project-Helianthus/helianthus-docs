@@ -48,11 +48,12 @@ concurrency:
 jobs:
   markdown-checks:
     name: Docs Checks
-    # fork pull requests never run on the persistent runners
-    runs-on: ${{ (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository) && 'ubuntu-latest' || 'synology' }}
-    # The local docs CI exceeds 90 minutes on the shared self-hosted runner when
-    # other jobs run beside it; 150 minutes keeps the job from being cancelled
-    # a few steps before the end (issue #733 tracks the runtime itself).
+    # Same-repository and fork jobs use the standard ephemeral runner.
+    # The existing Python pin is supported there.
+    runs-on: ubuntu-24.04
+    # The local docs CI exceeds 90 minutes when other jobs run beside it; 150
+    # minutes keeps the job from being cancelled a few steps before the end
+    # (issue #733 tracks the runtime itself).
     timeout-minutes: 150
     steps:
       - name: Checkout PR head

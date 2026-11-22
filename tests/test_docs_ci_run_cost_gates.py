@@ -153,3 +153,12 @@ def test_nightly_dispatch_and_fork_runs_always_validate(workspace, event, same):
 def test_classifier_compares_exactly_the_documented_inputs():
     script = classify_step()["run"]
     assert f"for path in {' '.join(PLATFORM_INPUTS)}; do" in script
+
+
+def test_same_repository_jobs_use_the_ephemeral_ubuntu_2404_runner():
+    assert load(DOCS_CI)["jobs"]["markdown-checks"]["runs-on"] == "ubuntu-24.04"
+    assert load(COMBINED_REF)["jobs"]["validate"]["runs-on"] == "ubuntu-24.04"
+    for workflow in (DOCS_CI, COMBINED_REF):
+        text = workflow.read_text(encoding="utf-8")
+        assert "synology" not in text
+        assert "ubuntu-latest" not in text
