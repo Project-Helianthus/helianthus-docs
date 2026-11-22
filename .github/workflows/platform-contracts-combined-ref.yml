@@ -225,19 +225,32 @@ jobs:
           fi
           printf 'changed=%s\n' "${changed}" >> "${GITHUB_OUTPUT}"
 
+      # This repository does not contain the owner manifest. Non-bootstrap
+      # runs read it from the pinned public docs-ebus checkout, which stays
+      # separate from the trusted validator checkout.
+      - name: Checkout pinned docs-ebus owner manifest
+        if: steps.platform_inputs.outputs.changed == 'true'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: Project-Helianthus/helianthus-docs-ebus
+          ref: ${{ inputs.docs_ebus_pin }}
+          path: checkouts/docs-ebus-pin
+          clean: true
+          persist-credentials: false
+
       - name: Materialize trusted prior manifest
         if: steps.platform_inputs.outputs.changed == 'true'
         id: prior_manifest
         shell: bash
         env:
-          TRUSTED_BASE_REF: ${{ steps.trusted_validator.outputs.bootstrap == 'true' && steps.trusted_validator.outputs.ref || inputs.docs_base_ref }}
+          TRUSTED_BASE_REF: ${{ steps.trusted_validator.outputs.bootstrap == 'true' && steps.trusted_validator.outputs.ref || inputs.docs_ebus_pin }}
           BOOTSTRAP: ${{ steps.trusted_validator.outputs.bootstrap }}
         run: |
           set -euo pipefail
           if [[ "${BOOTSTRAP:-}" == "true" ]]; then
             base_root="${GITHUB_WORKSPACE}/checkouts/docs-validator"
           else
-            base_root="${GITHUB_WORKSPACE}/checkouts/docs-base"
+            base_root="${GITHUB_WORKSPACE}/checkouts/docs-ebus-pin"
           fi
           manifest_path="docs/platform/manifests/eebus-doc-ownership.yaml"
           materialized_root="${RUNNER_TEMP}/helianthus-trusted-prior-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
@@ -417,6 +430,7 @@ jobs:
             python3 checkouts/docs/scripts/validate_platform_combined_ref.py \
               --docs-root checkouts/docs \
               --docs-repository "${{ inputs.docs_repository }}" \
+              --owner-manifest-root checkouts/docs-ebus-pin \
               --docs-eebus-root checkouts/docs-eebus \
               --eebusreg-root checkouts/eebusreg \
               --m625-docs-eebus-root checkouts/m625-docs-eebus \
@@ -456,6 +470,7 @@ jobs:
             python3 checkouts/docs-validator/scripts/validate_platform_combined_ref.py \
               --docs-root checkouts/docs \
               --docs-repository "${{ inputs.docs_repository }}" \
+              --owner-manifest-root checkouts/docs-ebus-pin \
               --docs-eebus-root checkouts/docs-eebus \
               --eebusreg-root checkouts/eebusreg \
               --m625-docs-eebus-root checkouts/m625-docs-eebus \
@@ -502,6 +517,7 @@ jobs:
               --mode main-expiry \
               --docs-root checkouts/docs \
               --docs-repository "${DOCS_REPOSITORY}" \
+              --owner-manifest-root checkouts/docs-ebus-pin \
               --m625-docs-eebus-root checkouts/m625-docs-eebus \
               --m625-execution-plans-root checkouts/m625-execution-plans \
               --evaluated-at "${evaluated_at}" \

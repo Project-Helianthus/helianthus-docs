@@ -1631,11 +1631,31 @@ def create_trusted_base_fixture(root: pathlib.Path, kind: str) -> tuple[str, byt
     return commit_fixture(root, "helianthus-docs"), expected
 
 
+def trusted_prior_checkout(script: str) -> str:
+    """Checkout the materialize step reads when BOOTSTRAP is unset."""
+    else_branch = re.search(
+        r'^else\n\s*base_root="\$\{GITHUB_WORKSPACE\}/([^"]+)"',
+        script,
+        re.MULTILINE,
+    )
+    if else_branch is not None:
+        return else_branch.group(1)
+    direct = re.search(
+        r'^base_root="\$\{GITHUB_WORKSPACE\}/([^"]+)"',
+        script,
+        re.MULTILINE,
+    )
+    if direct is None:
+        raise AssertionError("trusted prior step does not name a checkout root")
+    return direct.group(1)
+
+
 def run_trusted_prior_workflow_step(
     tmp_path: pathlib.Path, workflow_path: pathlib.Path, kind: str
 ) -> tuple[subprocess.CompletedProcess[str], pathlib.Path, bytes]:
+    script = trusted_prior_workflow_step(workflow_path)["run"]
     workspace = tmp_path / "workspace"
-    base_root = workspace / "checkouts/docs-base"
+    base_root = workspace / trusted_prior_checkout(script)
     trusted_ref, expected = create_trusted_base_fixture(base_root, kind)
     runner_temp = tmp_path / "runner-temp"
     runner_temp.mkdir()
@@ -1651,7 +1671,6 @@ def run_trusted_prior_workflow_step(
             "TRUSTED_BASE_REF": trusted_ref,
         }
     )
-    script = trusted_prior_workflow_step(workflow_path)["run"]
     result = subprocess.run(
         ["bash", "-euo", "pipefail", "-c", script],
         check=False,
@@ -2646,6 +2665,119 @@ def test_trusted_prior_workflow_rejects_nonregular_manifest_objects(
 ) -> None:
     result, _, _ = run_trusted_prior_workflow_step(tmp_path, workflow_path, kind)
     assert result.returncode != 0
+
+
+OWNER_MANIFEST_CHECKOUT = "checkouts/docs-ebus-pin"
+
+
+def bootstrap_else_body(script: str) -> str:
+    marker = 'if [[ "${BOOTSTRAP}" == "true" ]]; then\n'
+    start = script.find(marker)
+    assert start != -1, script
+    rest = script[start + len(marker) :]
+    else_at = rest.find("\nelse\n")
+    assert else_at != -1, script
+    tail = rest[else_at + len("\nelse\n") :]
+    end = tail.find("\nfi")
+    assert end != -1, script
+    return tail[:end]
+
+
+def test_nonbootstrap_prior_manifest_comes_from_pinned_docs_ebus_owner() -> None:
+    reusable_path = (
+        REPO_ROOT / ".github/workflows/platform-contracts-combined-ref.yml"
+    )
+    workflow = yaml.safe_load(reusable_path.read_text(encoding="utf-8"))
+    steps = workflow["jobs"]["validate"]["steps"]
+    names = [step.get("name") for step in steps]
+    checkout_index = names.index("Checkout pinned docs-ebus owner manifest")
+    materialize_index = names.index(TRUSTED_PRIOR_STEP)
+    classify_index = names.index("Classify platform input changes")
+    assert classify_index < checkout_index < materialize_index
+    checkout = steps[checkout_index]
+    assert checkout["if"] == "steps.platform_inputs.outputs.changed == 'true'"
+    assert checkout["uses"].startswith("actions/checkout@")
+    assert checkout["with"]["repository"] == "Project-Helianthus/helianthus-docs-ebus"
+    assert checkout["with"]["ref"] == "${{ inputs.docs_ebus_pin }}"
+    assert checkout["with"]["path"] == OWNER_MANIFEST_CHECKOUT
+    assert checkout["with"]["persist-credentials"] is False
+
+    materialize = steps[materialize_index]
+    trusted_ref = materialize["env"]["TRUSTED_BASE_REF"]
+    assert "inputs.docs_base_ref" not in trusted_ref
+    assert "inputs.docs_ebus_pin" in trusted_ref
+    script = materialize["run"]
+    assert trusted_prior_checkout(script) == OWNER_MANIFEST_CHECKOUT
+    assert 'base_root="${GITHUB_WORKSPACE}/checkouts/docs-base"' not in script
+    assert (
+        'base_root="${GITHUB_WORKSPACE}/checkouts/docs-validator"' in script
+    )
+
+    validator_names = (
+        "Validate PR M6.25 provenance contract",
+        "Validate combined refs",
+        "Enforce trusted manifest expiry",
+    )
+    validator_steps = [
+        step for step in steps if step.get("name") in validator_names
+    ]
+    assert [step["name"] for step in validator_steps] == list(validator_names)
+    for step in validator_steps:
+        body = bootstrap_else_body(step["run"])
+        assert f"--owner-manifest-root {OWNER_MANIFEST_CHECKOUT}" in body
+        assert "checkouts/docs-base" not in body
+
+
+def test_nonbootstrap_materialize_ignores_platform_base_without_manifest(
+    tmp_path: pathlib.Path,
+) -> None:
+    workflow_path = (
+        REPO_ROOT / ".github/workflows/platform-contracts-combined-ref.yml"
+    )
+    script = trusted_prior_workflow_step(workflow_path)["run"]
+    workspace = tmp_path / "workspace"
+    platform_base = workspace / "checkouts/docs-base"
+    platform_base.mkdir(parents=True)
+    (platform_base / "README.md").write_text("platform base\n", encoding="utf-8")
+    commit_fixture(platform_base, "helianthus-docs")
+    owner = workspace / OWNER_MANIFEST_CHECKOUT
+    expected = b"schema: pinned-owner-manifest\n"
+    owner.mkdir(parents=True)
+    manifest = owner / MANIFEST_PATH
+    manifest.parent.mkdir(parents=True)
+    manifest.write_bytes(expected)
+    pin_ref = commit_fixture(owner, "helianthus-docs-ebus")
+    runner_temp = tmp_path / "runner-temp"
+    runner_temp.mkdir()
+    github_output = tmp_path / "github-output.txt"
+    env = os.environ.copy()
+    env.pop("BOOTSTRAP", None)
+    env.update(
+        {
+            "GITHUB_WORKSPACE": str(workspace),
+            "RUNNER_TEMP": str(runner_temp),
+            "GITHUB_RUN_ID": "343",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_OUTPUT": str(github_output),
+            "TRUSTED_BASE_REF": pin_ref,
+        }
+    )
+    result = subprocess.run(
+        ["bash", "-euo", "pipefail", "-c", script],
+        check=False,
+        capture_output=True,
+        text=True,
+        cwd=workspace,
+        env=env,
+    )
+    assert result.returncode == 0, result.stderr
+    output = github_output.read_text(encoding="utf-8").strip()
+    assert output.startswith("path=")
+    materialized_path = output.removeprefix("path=")
+    assert materialized_path
+    materialized = pathlib.Path(materialized_path)
+    assert materialized.is_relative_to(runner_temp)
+    assert materialized.read_bytes() == expected
 
 
 @pytest.mark.parametrize("path,required_terms", PAGE_REQUIRED_TERMS.items())
