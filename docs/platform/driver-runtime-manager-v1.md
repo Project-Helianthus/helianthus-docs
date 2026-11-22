@@ -32,7 +32,7 @@ The IDs identify configured runtime instances, not physical devices. Device
 identity, transport endpoints, credentials, and protocol payloads never enter
 an ID. Consumers use registered IDs and must not invent IDs or placeholders.
 Endpoint-specific instances follow the existing
-[multi-endpoint contract](../../api/modbus-multi-endpoint-runtime.md); adding an
+[multi-endpoint contract](https://github.com/Project-Helianthus/helianthus-docs-ebus/blob/977614c944cd685bef75b5b12148e1110ed7653a/api/modbus-multi-endpoint-runtime.md); adding an
 instance does not require a versioned catalog on this page.
 
 Registration evidence does not establish provider readiness, protocol or family

@@ -50,7 +50,7 @@ accommodates this variation.
 JSON, pretty-printed, with deterministic key order. The normative validator is
 [`santhosh-tekuri/jsonschema/cmd/jv`](https://github.com/santhosh-tekuri/jsonschema)
 (Go-native, Draft 2020-12 native). The schema artifact ships at
-[`runtime-state/runtime_state.schema.json`](../runtime-state/runtime_state.schema.json).
+[`runtime-state/runtime_state.schema.json`](https://github.com/Project-Helianthus/helianthus-docs/blob/main/runtime-state/runtime_state.schema.json).
 
 ## Schema (v1)
 
@@ -423,15 +423,15 @@ follow without breaking add-on startup).
 ## JSON Schema artifact
 
 The normative JSON Schema artifact is at
-[`runtime-state/runtime_state.schema.json`](../runtime-state/runtime_state.schema.json).
+[`runtime-state/runtime_state.schema.json`](https://github.com/Project-Helianthus/helianthus-docs/blob/main/runtime-state/runtime_state.schema.json).
 It uses Draft 2020-12
 (`$schema: "https://json-schema.org/draft/2020-12/schema"`).
 
 The artifact is validated in CI against:
 
 - Two positive fixtures that must validate clean:
-  - [`runtime-state/examples/positive.json`](../runtime-state/examples/positive.json) — a complete v1 file with `ebus.schema_version=1`.
-  - [`runtime-state/examples/positive-future-ebus-version.json`](../runtime-state/examples/positive-future-ebus-version.json) — a file with `ebus.schema_version=99` carrying v99-shaped fields. This proves the schema's `if/then` conditional gating: v1 field constraints (`self`, `known_bus_members[]`) only fire when `ebus.schema_version == 1`. Files for unknown plugin versions pass schema validation so the gateway can ignore the namespace at runtime per AD12 (otherwise plugin-version mismatches would be promoted to corrupt-quarantine, breaking the AD12 ignore-namespace promise).
+  - [`runtime-state/examples/positive.json`](https://github.com/Project-Helianthus/helianthus-docs/blob/main/runtime-state/examples/positive.json) — a complete v1 file with `ebus.schema_version=1`.
+  - [`runtime-state/examples/positive-future-ebus-version.json`](https://github.com/Project-Helianthus/helianthus-docs/blob/main/runtime-state/examples/positive-future-ebus-version.json) — a file with `ebus.schema_version=99` carrying v99-shaped fields. This proves the schema's `if/then` conditional gating: v1 field constraints (`self`, `known_bus_members[]`) only fire when `ebus.schema_version == 1`. Files for unknown plugin versions pass schema validation so the gateway can ignore the namespace at runtime per AD12 (otherwise plugin-version mismatches would be promoted to corrupt-quarantine, breaking the AD12 ignore-namespace promise).
 - Six negative fixtures
   ([`runtime-state/examples/negative-*.json`](../runtime-state/examples/))
   that must validate as invalid:

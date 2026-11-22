@@ -247,7 +247,7 @@ unknown acceptance entries. Existing debt retains its exact spelling, violated
 rule or documented open question and follow-up; acceptance is never generated
 from current names during CI. Unknown provisional names retain their questions.
 
-The Docs Checks local gate ([`scripts/ci_local.sh`](../scripts/ci_local.sh))
+The Docs Checks local gate ([`scripts/ci_local.sh`](https://github.com/Project-Helianthus/helianthus-docs/blob/main/scripts/ci_local.sh))
 always runs the guard and its independent mutation tests, both in Docs CI and
 locally. Coverage of other native pages and fixtures, and enforcement by each
 consuming repository remain follow-up work. F52 remains open until these are covered.

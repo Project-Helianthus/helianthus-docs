@@ -1261,7 +1261,7 @@ This contract is implemented by the gateway's GraphQL system-bounds resolver
 handler in companion gateway [pull request #1033](https://github.com/Project-Helianthus/helianthus-gateway/pull/1033),
 which is merged after this page per the documentation gate; this page describes
 the behaviour of that change, the reviewed source artifact.
-The contract test [`tests/test_system_config_bound_contract.py`](../tests/test_system_config_bound_contract.py)
+The contract test [`tests/test_system_config_bound_contract.py`](https://github.com/Project-Helianthus/helianthus-docs/blob/main/tests/test_system_config_bound_contract.py)
 in this repository pins the documented members and examples.
 
 `ebus_v1_semantic_system_get` publishes `config.dhw_bivalence_point_bound`.

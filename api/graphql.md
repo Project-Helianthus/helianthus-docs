@@ -1084,7 +1084,7 @@ Accept: application/json
 ```
 
 [basv0-profile]:
-  ../protocols/vaillant/ebus-vaillant-b524-basv0-profile-v1.md
+  https://github.com/Project-Helianthus/helianthus-docs-ebus/blob/main/protocols/vaillant/ebus-vaillant-b524-basv0-profile-v1.md
 
 [gateway-bound-discovery]:
   https://github.com/Project-Helianthus/helianthus-gateway/issues/1034
@@ -1144,7 +1144,7 @@ This contract is implemented by the gateway's GraphQL system-bounds resolver
 (`graphql/mutations.go`), and the MCP tool `ebus_v1_semantic_system_set_config`
 handler in companion gateway [pull request #1033](https://github.com/Project-Helianthus/helianthus-gateway/pull/1033),
 which defines the system-bounds behaviour described here.
-The contract test [`tests/test_system_config_bound_contract.py`](../tests/test_system_config_bound_contract.py)
+The contract test [`tests/test_system_config_bound_contract.py`](https://github.com/Project-Helianthus/helianthus-docs/blob/main/tests/test_system_config_bound_contract.py)
 in this repository pins the documented members and examples.
 
 The `set_system_config(field, value)` mutation, the MCP tool

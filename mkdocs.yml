@@ -7,12 +7,11 @@ docs_dir: pages-src
 site_dir: site
 strict: true
 use_directory_urls: true
-# Pages that are not in this tree are still linked relatively. Retargeting
-# those links is a content change, so a missing target does not fail the build.
-# Strict mode still fails every other warning.
+# A relative link whose target is not in this tree fails the strict build.
+# Pages that live in another repository use an absolute link to that repository.
 validation:
   links:
-    not_found: ignore
+    not_found: warn
 exclude_docs: |
   **/author-evidence/**
   **/fixtures/**

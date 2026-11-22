@@ -61,7 +61,7 @@ Current platform contracts:
   negative conformance fixtures
 - [`schemas/canonical-pv-source-registry-bindings-v1.schema.json`](./schemas/canonical-pv-source-registry-bindings-v1.schema.json) -
   protocol-neutral resolver contract for source-owned admission bindings
-- [`../../scripts/validate_canonical_pv_v1.py`](../../scripts/validate_canonical_pv_v1.py) -
+- [`../../scripts/validate_canonical_pv_v1.py`](https://github.com/Project-Helianthus/helianthus-docs/blob/main/scripts/validate_canonical_pv_v1.py) -
   public manifest-aware schema and semantic conformance validator
 - [`manifests/modbus-foundation-profile-contract-v1.json`](https://github.com/Project-Helianthus/helianthus-docs-ebus/blob/main/docs/platform/manifests/modbus-foundation-profile-contract-v1.json) -
   machine-readable M1/M2 companion inventory and downstream pin contract

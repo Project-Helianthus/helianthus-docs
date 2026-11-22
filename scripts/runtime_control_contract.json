@@ -341,7 +341,7 @@
       "| `modbus.sunspec` | Modbus TCP | SunSpec runtime |",
       "| `growatt.bms.rs485` | Growatt BMS | RS485 runtime |",
       "| `eebus.primary` | eeBUS | primary SHIP/SPINE runtime |",
-      "The IDs identify configured runtime instances, not physical devices. Device\nidentity, transport endpoints, credentials, and protocol payloads never enter\nan ID. Consumers use registered IDs and must not invent IDs or placeholders.\nEndpoint-specific instances follow the existing\n[multi-endpoint contract](../../api/modbus-multi-endpoint-runtime.md); adding an\ninstance does not require a versioned catalog on this page.",
+      "The IDs identify configured runtime instances, not physical devices. Device\nidentity, transport endpoints, credentials, and protocol payloads never enter\nan ID. Consumers use registered IDs and must not invent IDs or placeholders.\nEndpoint-specific instances follow the existing\n[multi-endpoint contract](https://github.com/Project-Helianthus/helianthus-docs-ebus/blob/977614c944cd685bef75b5b12148e1110ed7653a/api/modbus-multi-endpoint-runtime.md); adding an\ninstance does not require a versioned catalog on this page.",
       "Registration evidence does not establish provider readiness, protocol or family\nqualification, runtime admission, or delivery of the broader manager proposal.\nThose remain **Unknown** from this inventory evidence alone; proposed manager\nbehavior remains a **Hypothesis** until its own acceptance evidence exists.",
       "This contract owns process composition, lifecycle, readiness, operations, and\nconsumer rollout. It does not alter transport framing, protocol semantics,\nregistry projection, trust ownership, Modbus profile selection, or bus writes."
     ],

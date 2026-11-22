@@ -264,4 +264,4 @@ fixture or resolver-only object for this wire-shaped boundary.
 - [canonical query](../../api/public-graphql-m2m-v1.query.graphql)
 - [machine-readable manifest](./manifests/public-graphql-m2m-v1.json)
 - [deterministic cases](./fixtures/public-graphql-m2m/v1/cases.json)
-- [`validate_public_graphql_m2m_v1.py`](../../scripts/validate_public_graphql_m2m_v1.py)
+- [`validate_public_graphql_m2m_v1.py`](https://github.com/Project-Helianthus/helianthus-docs/blob/main/scripts/validate_public_graphql_m2m_v1.py)

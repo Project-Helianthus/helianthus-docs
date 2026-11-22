@@ -86,10 +86,10 @@ the offline reset section and align any manager-page restatement:
 > outcome and must not be described as an unchanged refusal.
 
 The supplement's required ordering and failure outcomes are frozen in
-[`runtime_control_contract.json`](../scripts/runtime_control_contract.json)
+[`runtime_control_contract.json`](https://github.com/Project-Helianthus/helianthus-docs/blob/main/scripts/runtime_control_contract.json)
 and checked in their normative section and order by
-[`check_runtime_control_contract.py`](../scripts/check_runtime_control_contract.py)
-and focused [contract tests](../tests/test_runtime_control_contract.py).
+[`check_runtime_control_contract.py`](https://github.com/Project-Helianthus/helianthus-docs/blob/main/scripts/check_runtime_control_contract.py)
+and focused [contract tests](https://github.com/Project-Helianthus/helianthus-docs/blob/main/tests/test_runtime_control_contract.py).
 Canonical lifecycle and manager cross-document integration remain outstanding;
 checker enforcement of this supplement does not claim to supply them.
 
