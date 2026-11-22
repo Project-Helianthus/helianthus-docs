@@ -1,0 +1,38 @@
+site_name: helianthus-docs
+site_description: Protocol-neutral Helianthus design and documentation.
+site_url: https://project-helianthus.github.io/helianthus-docs/
+repo_url: https://github.com/Project-Helianthus/helianthus-docs
+edit_uri: blob/main/
+docs_dir: pages-src
+site_dir: site
+strict: true
+use_directory_urls: true
+# A relative link whose target is not in this tree fails the strict build.
+# Pages that live in another repository use an absolute link to that repository.
+validation:
+  links:
+    not_found: warn
+exclude_docs: |
+  **/author-evidence/**
+  **/fixtures/**
+  docs/platform/schemas/**
+  **/*.py
+  **/*.pyc
+  **/*.json
+  **/*.yml
+  **/*.yaml
+  **/*.toml
+  **/*.txt
+  **/*.sh
+  **/*.graphql
+  **/*.bin
+  **/*.test
+  **/*.go
+  **/__pycache__/**
+nav:
+  - Home: README.md
+  - API: api/index.md
+  - Architecture: architecture/index.md
+  - Platform: docs/platform/README.md
+  - Development: development/runtime-control-reset-and-revision-vectors.md
+  - Changelog: CHANGELOG.md
